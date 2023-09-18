@@ -1,0 +1,27 @@
+# My first Playbook
+---
+- name: Play 1 - My first Play - Show VRF info from Routers
+  hosts: routers
+
+  tasks:
+    - name: Task 1 - Get VRF info from Routers
+      cisco.ios.ios_command:
+        commands:
+          - "show run | sec vrf"
+      register: vrfs
+    
+    - name: Task 2 - Print VRF info from Routers
+      ansible.builtin.debug:
+        msg:
+          - "{{ vrfs.stdout[0] }}"
+
+    - name: Task 3 - Create directory for output files
+      ansible.builtin.file:
+        path: "vrfs"
+        state: directory
+      run_once: true
+
+    - name: Task 4 - Write VRF info to file
+      ansible.builtin.copy:
+        content: "{{ vrfs.stdout[0] }}\n"
+        dest: "vrfs/vrfs_{{ inventory_hostname}}.txt"

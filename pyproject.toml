@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "ansible-mpls-lab"
+version = "0.1.0"
+description = ""
+authors = ["yonosemanana <yonosemanana.ap@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+paramiko = "^3.3.1"
+ansible-pylibssh = "^1.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,10 @@
+all:
+  children:
+    routers:
+      hosts:
+        R1:
+          ansible_host: 10.255.255.1
+        R2:
+          ansible_host: 10.255.255.2
+        R3:
+          ansible_host: 10.255.255.3
