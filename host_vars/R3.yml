@@ -3,27 +3,19 @@ vrfs:
 
   - name: Chemical-Lab
     description: Chemical Lab VRF
-    rd: 65000:1000
+    rd: 65000:2
     route_target_export:
-      - 65000:1000
+      - 65000:2
+      - 65000:4
     route_target_import:
-      - 65000:1000
-      - 65000:3300
+      - 65000:2
+      - 65000:3
 
   - name: Police
     description: Police VRF
-    rd: 65000:2000
+    rd: 65000:1
     route_target_export: 
-      - 65000:2000
+      - 65000:1
     route_target_import:
-      - 65000:2000
+      - 65000:1
 
-  - name: Chemical-Manager
-    description: Chemical Lab Manager VRF
-    rd: 65000:3000
-    route_target_export:
-      - 65000:3100
-      - 65000:3300
-    route_target_import:
-      - 65000:3200
-      - 65000:1000
