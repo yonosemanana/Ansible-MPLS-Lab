@@ -1,0 +1,11 @@
+{% for vrf in vrfs %}
+vrf definition {{ vrf.name }}
+ description {{ vrf.description }}
+ rd {{ vrf.rd }}
+ {% for rt_export in vrf.route_target_export %}
+ route-target export {{ rt_export }}
+ {% endfor %}
+ {% for rt_import in vrf.route_target_import %}
+ route-target import {{ rt_import }}
+ {% endfor %}
+{% endfor %}
