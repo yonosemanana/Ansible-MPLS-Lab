@@ -1,0 +1,30 @@
+---
+- name: PLAY 1 - Test Ansible module for files
+  hosts: p_routers
+
+  tasks:
+    - name: TASK 1 - Get facts from a router
+      cisco.ios.ios_facts:
+        gather_subset: config
+      register: router_config
+
+    - name: TASK 2 - Create a directory
+      ansible.builtin.file:
+        path: "test_files/routers_configs"
+        state: directory
+
+    - name: TASK 3 - Save facts to file
+      ansible.builtin.copy:
+        content: "{{ router_config.ansible_facts.ansible_net_config }}\n"
+        dest: "test_files/routers_configs/{{ inventory_hostname }}.txt"
+
+    - name: TASK 4 - Create a test file
+      ansible.builtin.file:
+        path: "test_files/routers_configs/test_file"
+        state: touch
+
+    - name: TASK 5 - Create a test symlink
+      ansible.builtin.file:
+        path: "test_files/routers_configs/symlink_test"
+        state: link
+        src: "R2.txt"
