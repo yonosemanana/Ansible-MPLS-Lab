@@ -1,10 +1,18 @@
 all:
   children:
     routers:
+      children:
+        pe_routers:
+        p_routers:
+
+
+    pe_routers:
       hosts:
         R1:
           ansible_host: 10.255.255.1
-            #R2:
-            #ansible_host: 10.255.255.2
         R3:
           ansible_host: 10.255.255.3
+    p_routers:
+      hosts:
+        R2: 
+          ansible_host: 10.255.255.2
