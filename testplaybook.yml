@@ -17,11 +17,11 @@
 
     - name: Task 3 - Create directory for output files
       ansible.builtin.file:
-        path: "vrfs"
+        path: "test_files/vrfs"
         state: directory
       run_once: true
 
     - name: Task 4 - Write VRF info to file
       ansible.builtin.copy:
         content: "{{ vrfs.stdout[0] }}\n"
-        dest: "vrfs/vrfs_{{ inventory_hostname}}.txt"
+        dest: "test_files/vrfs/vrfs_{{ inventory_hostname}}.txt"
