@@ -3,11 +3,13 @@
   hosts: pe_routers
 
   tasks:
-    
-    - name: TASK 1 - Create VRFs on PE routers
-      cisco.ios.ios_config:
-        src: templates/ios_vpns.j2
-        save_when: changed
+    - name: TASK 1 - Set fact - Jinja2 template filename
+      ansible.builtin.set_fact:
+        vpn_file: "templates/{{ansible_network_os}}_vpns.j2" 
+
+    - name: TASK 2 - Create VRFs on PE routers
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', vpn_file) }}"
       register: config_changes
       notify: config_changed
 
@@ -18,3 +20,4 @@
       ansible.builtin.debug:
         msg: "{{ config_changes }}"
       listen: config_changed
+
