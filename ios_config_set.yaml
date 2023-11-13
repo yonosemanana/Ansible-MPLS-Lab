@@ -1,6 +1,6 @@
 ---
 - name: PLAY 1 - Create VRFs
-  hosts: pe_routers
+  hosts: ios_routers
 
   tasks:
     
