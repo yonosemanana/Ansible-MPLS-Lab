@@ -1,0 +1,22 @@
+---
+- name: PLAY 1 - Get VRFs from Cisco IOS config
+  hosts: ios_routers
+
+  tasks:
+
+    - name: TASK 1 - Fetch VRF config from routers
+      cisco.ios.ios_facts:
+        gather_subset: config
+      register: router_config 
+
+    - name: TASK 2 - Print router config
+      ansible.builtin.debug:
+        msg: "{{ router_config }}"
+
+    - name: TASK 3 - Set fact - VRF config
+      ansible.builtin.set_fact:
+        vrf_data: "{{ router_config.ansible_facts.ansible_net_config | ios_vrf_rt }}"
+
+    - name: TASK 4 - Print VRF data
+      ansible.builtin.debug:
+        msg: "{{ vrf_data }}"
