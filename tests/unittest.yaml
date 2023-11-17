@@ -1,0 +1,31 @@
+---
+
+- name: PLAY - Unit tests
+  hosts: localhost
+  connection: local
+
+  tasks:
+
+    - name: Find all unit tests task files
+      ansible.builtin.find:
+        paths: "{{ playbook_dir }}/tasks"
+        patterns: "test_*[.]yaml"
+      register: unit_tests
+
+#    - name: Print paths to unit tests
+#      ansible.builtin.debug:
+#        msg: "{{ unit_tests }}"
+
+    - name: Get paths of the unit tests
+      ansible.builtin.set_fact:
+        unit_tests_paths: "{{ unit_tests.files | map(attribute='path') | list }}"
+
+#    - name: Print unit test paths
+#      ansible.builtin.debug:
+#        msg: "{{ unit_tests_paths }}"
+
+    - name: Run all unit tests
+      ansible.builtin.include_tasks: "{{ unit_test }}"
+      loop: "{{ unit_tests_paths }}"
+      loop_control:
+        loop_var: unit_test
