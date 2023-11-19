@@ -1,18 +1,16 @@
 ---
 vrfs:
 
-  - name: Chemical-Lab
-    description: Chemical Lab VRF
+  - name: "Chemical-Lab"
+    description: "Chemical Lab VRF"
     rd: "65000:2"
     route_export:
       - "65000:2"
-      - "65000:4"
     route_import:
       - "65000:2"
-      - "65000:3"
 
-  - name: Police
-    description: Police VRF
+  - name: "Police"
+    description: "Police VRF"
     rd: "65000:1"
     route_export: 
       - "65000:1"

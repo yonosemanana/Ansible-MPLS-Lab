@@ -1,0 +1,23 @@
+---
+- name: PLAY 1 - Create VRFs
+  hosts: pe_routers
+
+  tasks:
+    - name: TASK 1 - Set fact - Jinja2 template filename
+      ansible.builtin.set_fact:
+        vpn_file: "templates/{{ansible_network_os}}_vpns.j2" 
+
+    - name: TASK 2 - Create VRFs on PE routers
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', vpn_file) }}"
+      register: config_changes
+      notify: config_changed
+
+
+  handlers:
+    
+    - name: HANDLER 1 - Print config changes if any changes on routers have been made
+      ansible.builtin.debug:
+        msg: "{{ config_changes }}"
+      listen: config_changed
+
