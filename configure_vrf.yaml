@@ -1,0 +1,31 @@
+---
+- name: PLAY 1 - Configure VRFs on Cisco IOS routers based on IaC VRF variables
+  hosts: ios_routers
+
+  tasks:
+    - name: TASK 1 - Get running configuration from Cisco routers
+      cisco.ios.ios_facts:
+        gather_subset: config
+      register: run_config
+
+    - name: TASK 2 - Parse running config to get VRF config
+      ansible.builtin.set_fact:
+        run_vrf_dict: "{{ run_config.ansible_facts.ansible_net_config | ios_vrf_rt }}"
+
+    - name: TASK 3 - Check difference between intended VRF config and running config
+      ansible.builtin.set_fact:
+        vrf_diff: "{{ vrfs | rt_diff(run_vrf_dict) }}"
+
+    - name: TASK 4 - Apply VRF config difference to Cisco routers
+      cisco.ios.ios_config:
+        src: "templates/vpn_config.j2"
+        running_config: "{{ run_config }}"
+        save_when: changed
+      notify: config_changed
+      register: config_changes
+
+  handlers:
+    - name: HANDLER 1 - Print config changes
+      ansible.builtin.debug:
+        msg: "{{ config_changes }}"
+      listen: config_changed
