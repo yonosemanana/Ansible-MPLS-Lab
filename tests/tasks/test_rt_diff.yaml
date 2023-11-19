@@ -1,0 +1,116 @@
+---
+
+- name: Set variable - Running config
+  ansible.builtin.set_fact:
+    run_vrf_dict: 
+      # Descr: Wrong RT export
+      VPN1:
+        route_import:
+          - "65000:1"
+        route_export:
+          - "65000:101"
+      # Descr: additional RT import and missing RT export
+      VPN2:
+        route_import:
+          - "65000:2"
+          - "65000:22"
+        route_export: []
+      # Descr: wrong RT imports and missing RT export
+      VPN3:
+        route_import:
+          - "65003:3"
+          - "65003:33"
+        route_export:
+          - "65000:303"
+      # Descr: VRF not managed by IaC
+      VPN4:
+        route_import:
+          - "65000:4"
+        route_export:
+          - "65000:4"
+
+- name: Set variable - Intended config
+  ansible.builtin.set_fact:
+    int_vrf_list:
+      - name: "VPN1"
+        rd: "65000:1"
+        description: "First VPN"
+        route_import: 
+          - "65000:1"
+        route_export:
+          - "65000:1" 
+      - name: "VPN2"
+        rd: "65000:2"
+        description: "Second VPN"
+        route_import:
+          - "65000:2"
+        route_export:
+          - "65000:2"
+      - name: "VPN3"
+        rd: "65000:3"
+        description: "Third VPN"
+        route_import:
+          - "65000:3"
+          - "65000:33"
+        route_export: 
+          - "65000:3"
+          - "65000:303"
+
+
+- name: Get RT difference with custom filter 'rt_diff'
+  ansible.builtin.set_fact:
+    rt_difference: "{{ int_vrf_list | rt_diff(run_vrf_dict) }}"
+
+- name: Print RT difference
+  ansible.builtin.debug:
+    msg: "{{ rt_difference }}"
+
+- name: ASSERT >> Ensure that three VRFs are managed by IAC 
+  ansible.builtin.assert:
+   that: 
+     - rt_difference | length == 3
+
+- name: ASSERT >> Ensure VPN1 will be configured correctly
+  ansible.builtin.assert:
+    that:
+      - rt_difference[0]['name'] == 'VPN1'
+      - rt_difference[0]['rd'] == '65000:1'
+      - rt_difference[0]['description'] == 'First VPN'
+      - rt_difference[0]['add_rti'] | length == 0
+      - rt_difference[0]['del_rti'] | length == 0
+      - rt_difference[0]['add_rte'] | length == 1
+      - rt_difference[0]['add_rte'][0] == '65000:1'
+      - rt_difference[0]['del_rte'] | length == 1
+      - rt_difference[0]['del_rte'][0] == '65000:101'
+
+
+- name: ASSERT >> Ensure VPN2 will be configured correctly
+  ansible.builtin.assert:
+    that:
+      - rt_difference[1]['name'] == 'VPN2'
+      - rt_difference[1]['rd'] == '65000:2'
+      - rt_difference[1]['description'] == 'Second VPN'
+      - rt_difference[1]['add_rti'] | length == 0
+      - rt_difference[1]['del_rti'] | length == 1
+      - rt_difference[1]['del_rti'][0] == '65000:22'
+      - rt_difference[1]['add_rte'] | length == 1
+      - rt_difference[1]['add_rte'][0] == '65000:2'
+      - rt_difference[1]['del_rte'] | length == 0
+
+
+- name: ASSERT >> Ensure VPN3 will be configured correctly
+  ansible.builtin.assert:
+    that:
+      - rt_difference[2]['name'] == 'VPN3'
+      - rt_difference[2]['rd'] == '65000:3'
+      - rt_difference[2]['description'] == 'Third VPN'
+      - rt_difference[2]['add_rti'] | length == 2
+      - rt_difference[2]['add_rti'][0] == '65000:3'
+      - rt_difference[2]['add_rti'][1] == '65000:33'
+      - rt_difference[2]['del_rti'] | length == 2 
+      - rt_difference[2]['del_rti'][0] == '65003:3'
+      - rt_difference[2]['del_rti'][1] == '65003:33'
+      - rt_difference[2]['add_rte'] | length == 1
+      - rt_difference[2]['add_rte'][0] == '65000:3'
+      - rt_difference[2]['del_rte'] | length == 0
+
