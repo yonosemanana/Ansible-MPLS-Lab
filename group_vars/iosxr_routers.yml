@@ -1,1 +1,4 @@
 ansible_network_os: iosxr
+ansible_connection: ansible.netcommon.netconf
+
+xmlfilter_vrf: <vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"><vrf></vrf></vrfs>

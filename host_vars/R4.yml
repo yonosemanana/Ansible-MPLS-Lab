@@ -17,3 +17,10 @@ vrfs:
     route_import:
       - "65000:1"
 
+  - name: "Wholesale"
+    description: "Wholesale VRF"
+    rd: "65000:10"
+    route_export:
+      - "65000:10"
+    route_import:
+      - "65000:10"

@@ -1,0 +1,18 @@
+---
+- name: PLAY - Configure VRFs on routers with NETCONF
+  hosts: iosxe_routers
+  connection: netconf
+
+  tasks:
+
+    - name: Prepare Jinja2 template
+      ansible.builtin.set_fact:
+        vrf_config: "{{ lookup('template', 'templates/ios_vpns_netconf.j2') }}"
+
+    - name: Print Jinja2 template
+      ansible.builtin.debug:
+        msg: "{{ vrf_config }}"
+
+    - name: Configure VRFs on routers
+      ansible.netcommon.netconf_config:
+        content: "{{ vrf_config }}"

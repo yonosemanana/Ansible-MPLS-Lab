@@ -1,0 +1,10 @@
+---
+
+vrfs:
+  - name: "Police"
+    description: "Police VRF"
+    rd: "65000:1"
+    route_import:
+      - "65000:1"
+    route_export:
+      - "65000:1"

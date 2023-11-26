@@ -1,0 +1,4 @@
+ansible_network_os: ios
+ansible_connection: ansible.netcommon.netconf
+
+xmlfilter_vrf: "<native><vrf></vrf></native>"

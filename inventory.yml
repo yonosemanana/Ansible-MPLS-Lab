@@ -6,6 +6,8 @@ all:
         p_routers:
         ios_routers:
         iosxr_routers:
+        iosxe_routers:
+        netconf_routers:
 
     ios_routers:
       hosts:
@@ -14,6 +16,14 @@ all:
     iosxr_routers:
       hosts:
         R4:
+    iosxe_routers:
+      hosts:
+        R5:
+
+    netconf_routers:
+      children:
+        iosxe_routers:
+        iosxr_routers:
 
     pe_routers:
       hosts:
@@ -23,6 +33,8 @@ all:
           ansible_host: 10.255.255.3
         R4:
           ansible_host: 10.255.255.4
+        R5:
+          ansible_host: 10.255.255.5
 
     p_routers:
       hosts:
