@@ -16,3 +16,8 @@
     - name: Configure VRFs on routers
       ansible.netcommon.netconf_config:
         content: "{{ vrf_config }}"
+
+    - name: Copy running-config to startup-config
+      ansible.netcommon.netconf_rpc:
+        xmlns: "http://cisco.com/yang/cisco-ia"
+        rpc: "save-config"
