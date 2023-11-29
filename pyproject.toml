@@ -13,6 +13,7 @@ ansible-base = "^2.10.17"
 ansible = "^9.0.1"
 ncclient = "^0.6.15"
 jxmlease = "^1.0.3"
+xmltodict = "^0.13.0"
 
 [tool.poetry.dev-dependencies]
 

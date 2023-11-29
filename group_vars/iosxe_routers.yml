@@ -1,4 +1,12 @@
-ansible_network_os: ios
-ansible_connection: ansible.netcommon.netconf
+#ansible_network_os: cisco.ios.ios
+#ansible_connection: ansible.netcommon.netconf
+
+ansible_network_os: ansible.netcommon.restconf
+ansible_connection: ansible.netcommon.httpapi
+ansible_httpapi_use_ssl: yes
+ansible_httpapi_validate_certs: no
+
+base_url: "https://{{ ansible_host }}/restconf"
+
 
 xmlfilter_vrf: "<native><vrf></vrf></native>"

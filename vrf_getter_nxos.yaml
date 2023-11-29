@@ -1,0 +1,54 @@
+---
+- name: PLAY - Get info about VRFs via RESTCONF
+  hosts: restconf_routers
+  connection: httpapi
+
+  tasks:
+
+    - name: TASK - Get full running-config
+      ansible.netcommon.restconf_get:
+        content: all
+        output: json 
+        path: data/Cisco-NX-OS-device
+      register: run_config_restconf
+
+    - name: TASK - Get running-config by Cisco NX-OS Ansible module
+      cisco.nxos.nxos_facts:
+        gather_subset: config
+      register: running_config
+
+    - name: TASK - Print running-config received by RESTCONF
+      ansible.builtin.debug:
+        msg: "{{ run_config_restconf }}"
+
+    - name: TASK - Print running-config received by Cisco NX-OS Ansible module
+      ansible.builtin.debug:
+        msg: "{{ running_config }}"
+
+
+
+
+
+
+
+- name: PLAY - Get info from NX-OS switches via RESTCONF and 'uri' Ansible module
+  hosts: nxos_routers
+  connection: local
+
+  tasks:  
+
+    - name: TASK - Get running-config with 'uri' Ansible module
+      ansible.builtin.uri:
+        url: "https://{{ansible_host}}/restconf/data/Cisco-NX-OS-device:System"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        method: GET
+        validate_certs: no
+        return_content: yes
+        headers:
+          Accept: "application/yang.data+json"
+      register: run_config_uri
+
+    - name: TASK - Print running-config received with 'uri' Ansible module
+      ansible.builtin.debug:
+        msg: "{{ run_config_uri }}"
