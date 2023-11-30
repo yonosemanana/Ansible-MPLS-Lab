@@ -52,3 +52,27 @@
     - name: TASK - Print running-config received with 'uri' Ansible module
       ansible.builtin.debug:
         msg: "{{ run_config_uri }}"
+
+
+    - name: TASK - Get VRF info from Cisco router
+      ansible.builtin.uri:
+        url: "https://{{ansible_host}}/restconf/data/Cisco-NX-OS-device:System/inst-items"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        method: GET
+        headers:
+          Accept: "application/yang.data+json"
+        return_content: yes
+        validate_certs: no
+      register: vrf_data
+
+    - name: TASK - Create output folder
+      ansible.builtin.file:
+        path: outputs
+        state: directory
+      run_once: true
+
+    - name: TASK - Write VRF data to file
+      ansible.builtin.copy:
+        content: "{{ vrf_data.json }}"
+        dest: "outputs/{{inventory_hostname}}.json"

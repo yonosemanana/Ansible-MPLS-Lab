@@ -51,3 +51,14 @@
     - name: TASK - Print VRF config
       ansible.builtin.debug:
         msg: "{{ vrf_config }}"
+
+    - name: TASK - Create output directory
+      ansible.builtin.file:
+        state: directory
+        path: outputs
+
+    - name: TASK - Write VRF info to file
+      ansible.builtin.copy:
+        content: "{{ vrf_config.json | to_nice_json }}"
+        dest: "outputs/{{ inventory_hostname }}.json"
+

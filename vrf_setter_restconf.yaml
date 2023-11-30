@@ -1,0 +1,39 @@
+---
+- name: PLAY - Configure VRFs on Cisco routers with RESTCONF
+  hosts: iosxe_routers
+  connection: local
+
+  tasks:
+
+    - name: TASK - Print VRF data from JSON file
+      ansible.builtin.debug:
+        msg: "{{ vrf_body }}"
+
+    - name: TASK - Configure VRFs on Cisco router
+      ansible.builtin.uri:
+        url: "{{ base_url }}/data/Cisco-IOS-XE-native:native/Cisco-IOS-XE-native:vrf"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        method: PUT
+        headers: 
+          Accept: >-
+            application/yang-data+json,
+            application/yang-data.errors+json
+          Content-Type: "application/yang-data+json"
+        body_format: json
+        body: "{{ vrf_body }}"
+        validate_certs: no
+        status_code:
+          - 200 # OK
+          - 204 # NO CONTENT
+
+    - name: TASK - Save running-config to startup-config
+      ansible.builtin.uri:
+        url: "{{ base_url }}/operations/cisco-ia:save-config"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        method: POST
+        headers:
+          Accept: "application/yang-data+json"
+          Content-Type: "application/yang-data+json"
+        validate_certs: no
