@@ -1,0 +1,28 @@
+---
+- name: PLAY - Gather Ansible facts from Cisco routers
+  hosts: routers
+  connection: network_cli
+
+  tasks:
+
+    - name: TASK - Print Ansible facts
+      ansible.builtin.debug:
+        msg: "{{ ansible_facts }}"
+
+    - name: TASK - Set facts - free & total memory
+      ansible.builtin.set_fact:
+        mem_free: "{{ ansible_facts.net_memfree_mb }}"
+        mem_total: "{{ ansible_facts.net_memtotal_mb }}"
+    
+    - name: TASK - Print memory facts
+      ansible.builtin.debug:
+        msg: "Free memory: {{ mem_free }} 
+  Total memory: {{ mem_total }}"
+    
+    - name: TASK - Set fact - memory utilization
+      ansible.builtin.set_fact:
+        mem_usage: "{{ (( mem_total | float - mem_free | float) / mem_total | float * 100 ) | round(2)}}"
+    - name: TASK - Print percentage of used memory
+      ansible.builtin.debug:
+        msg: "Used memory: {{ mem_usage }}%"
+
