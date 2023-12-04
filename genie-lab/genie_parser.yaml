@@ -1,0 +1,31 @@
+---
+- name: PLAY - Parse Cisco router config with Genie collection
+  hosts: routers
+  connection: network_cli
+  gather_facts: no
+  collections:
+    - clay584.genie
+
+  tasks:
+
+    - name: TASK - Get 'show version' info
+      cisco.ios.ios_command:
+        commands: "show version"
+      register: show_ver_output
+
+# The following tasks fail, because I couldn't make genie/pyats work on my PC
+    - name: TASK - Parse 'show version' info with Genie
+      ansible.builtin.set_fact:
+        show_ver_data: "{{ show_ver_output.stdout[0] | clay584.genie.parse_genie(command='show version', os='ios') }}"
+
+    - name: TASK - Print parsed 'show version' info
+      ansible.builtin.debug:
+        msg: "{{ show_ver_data }}"
+
+          #- name: TASK - Get 'show vrf detail' info
+
+          #- name: TASK - Parse 'show vrf detail' info with Genie
+
+          #- name: TASK - Print parsed 'show vrf detail' info with Genie
+
+

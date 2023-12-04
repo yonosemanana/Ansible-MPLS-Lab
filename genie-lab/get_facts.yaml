@@ -2,6 +2,9 @@
 - name: PLAY - Gather Ansible facts from Cisco routers
   hosts: routers
   connection: network_cli
+  module_defaults:
+    ios_facts:
+      gather_subset: all
 
   tasks:
 
@@ -16,8 +19,7 @@
     
     - name: TASK - Print memory facts
       ansible.builtin.debug:
-        msg: "Free memory: {{ mem_free }} 
-  Total memory: {{ mem_total }}"
+        msg: "Free memory: {{ mem_free }}. Total memory: {{ mem_total }}"
     
     - name: TASK - Set fact - memory utilization
       ansible.builtin.set_fact:
