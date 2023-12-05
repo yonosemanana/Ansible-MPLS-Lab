@@ -1,3 +1,4 @@
+---
 all:
   children:
     routers:
@@ -50,5 +51,5 @@ all:
 
     p_routers:
       hosts:
-        R2: 
+        R2:
           ansible_host: 10.255.255.2
