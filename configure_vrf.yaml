@@ -3,6 +3,26 @@
   hosts: ios_routers
 
   tasks:
+
+    - name: TASK 0 - Check if variables are set correctly
+      ansible.builtin.assert:
+        that:
+          - "vrfs is defined"
+          - "vrfs | type_debug == 'list'"
+
+    - name: TASK 0.1 - Check if all vrf in vrfs variable are defined correctly
+      ansible.builtin.assert:
+        that:
+          - "vrf.name is defined"
+          - "vrf.rd is defined"
+          - "vrf.route_import is defined"
+          - "vrf.route_import | type_debug == 'list'"
+          - "vrf.route_export is defined"
+          - "vrf.route_export | type_debug == 'list'"
+      loop: "{{ vrfs }}"
+      loop_control:
+        loop_var: vrf
+
     - name: TASK 1 - Get running configuration from Cisco routers
       cisco.ios.ios_facts:
         gather_subset: config
