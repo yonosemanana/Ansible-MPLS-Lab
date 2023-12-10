@@ -9,6 +9,7 @@
         that:
           - "vrfs is defined"
           - "vrfs | type_debug == 'list'"
+        msg: "Error! Check VRF config!"
 
     - name: TASK 0.1 - Check if all vrf in vrfs variable are defined correctly
       ansible.builtin.assert:
@@ -19,6 +20,7 @@
           - "vrf.route_import | type_debug == 'list'"
           - "vrf.route_export is defined"
           - "vrf.route_export | type_debug == 'list'"
+        msg: "Error! Check VRF config! {{ vrf }}"
       loop: "{{ vrfs }}"
       loop_control:
         loop_var: vrf
