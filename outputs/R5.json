@@ -1,0 +1,46 @@
+{
+    "Cisco-IOS-XE-native:vrf": {
+        "definition": [
+            {
+                "address-family": {
+                    "ipv4": {}
+                },
+                "name": "Mgmt-vrf"
+            },
+            {
+                "description": "Police VRF",
+                "name": "Police",
+                "rd": "65000:1",
+                "route-target": {
+                    "export": [
+                        {
+                            "asn-ip": "65000:1"
+                        }
+                    ],
+                    "import": [
+                        {
+                            "asn-ip": "65000:1"
+                        }
+                    ]
+                }
+            },
+            {
+                "description": "Test VRF",
+                "name": "Test",
+                "rd": "65000:123",
+                "route-target": {
+                    "export": [
+                        {
+                            "asn-ip": "65000:123"
+                        }
+                    ],
+                    "import": [
+                        {
+                            "asn-ip": "65000:123"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

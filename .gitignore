@@ -1,2 +1,7 @@
 plugins/filter/__pycache__/*
 *.swp
+genie-lab/bin
+genie-lab/include
+genie-lab/lib
+genie-lab/lib64
+genie-lab/pyvenv.cfg

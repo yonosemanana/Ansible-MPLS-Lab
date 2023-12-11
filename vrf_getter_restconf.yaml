@@ -1,0 +1,64 @@
+---
+- name: PLAY - Get VRF info from Cisco IOS XE routers by RESTCONF
+  hosts: iosxe_routers
+  connection: local 
+
+  tasks:
+
+#    # For some reason restconf_get module returns error: "HTTP 404 Error - not found"
+#    # However, it is able to pass authentication on IOS XE router (checked in the router logs)
+#    - name: TASK - Get running-config by RESTCONF
+#      ansible.netcommon.restconf_get:
+#        content: all 
+#        output: json 
+#        path: /restconf
+#      register: run_config_restconf
+#
+#    - name: TASK - Print running config
+#      ansible.builtin.debug:
+#        msg: "{{ run_config_restconf }}"
+#
+
+    - name: TASK - Get running-config by RESTCONF (with 'uri' Ansible module)
+      ansible.builtin.uri:
+        url: "{{ base_url }}/data/Cisco-IOS-XE-native:native"
+        method: GET
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        return_content: true
+        validate_certs: no
+        headers:
+          Accept: "application/yang-data+json"
+      register: run_config
+     
+    - name: TASK - Print running config received by 'uri' Ansible module
+      ansible.builtin.debug:
+        msg: "{{ run_config }}"   
+    
+
+    - name: TASK - Get VRF config
+      ansible.builtin.uri:
+        url: "{{ base_url }}/data/Cisco-IOS-XE-native:native/Cisco-IOS-XE-native:vrf"
+        method: GET
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        return_content: true
+        validate_certs: no
+        headers:
+          Accept: "application/yang-data+json"
+      register: vrf_config
+
+    - name: TASK - Print VRF config
+      ansible.builtin.debug:
+        msg: "{{ vrf_config }}"
+
+    - name: TASK - Create output directory
+      ansible.builtin.file:
+        state: directory
+        path: outputs
+
+    - name: TASK - Write VRF info to file
+      ansible.builtin.copy:
+        content: "{{ vrf_config.json | to_nice_json }}"
+        dest: "outputs/{{ inventory_hostname }}.json"
+

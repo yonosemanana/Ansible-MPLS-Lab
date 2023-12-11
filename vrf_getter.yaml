@@ -1,0 +1,34 @@
+---
+- name: PLAY - Get VRF config via NETCONF
+  hosts: netconf_routers
+  connection: netconf
+
+  tasks:
+
+    - name: Get full config from routers via NETCONF
+      ansible.netcommon.netconf_get:
+        source: running
+        display: pretty
+        filter: "{{ xmlfilter_vrf }}"
+      register: running_config
+
+    - name: Print router's running config
+      ansible.builtin.debug:
+        msg: "{{ running_config }}"
+
+    - name: Create directory for outputs from routers
+      ansible.builtin.file:
+        path: "outputs"
+        state: directory
+      run_once: true
+
+    - name: Pretty print XML file received by NETCONF
+      ansible.builtin.xml:
+        xmlstring: "{{ running_config.stdout }}"
+        pretty_print: true
+      register: running_config_pretty
+
+    - name: Save XML file received by NETCONF to output directory
+      ansible.builtin.copy:
+        content: "{{ running_config_pretty }}"
+        dest: "outputs/{{ inventory_hostname }}_netconf.xml"

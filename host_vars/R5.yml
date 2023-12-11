@@ -1,0 +1,43 @@
+---
+
+vrfs:
+  - name: "Police"
+    description: "Police VRF"
+    rd: "65000:1"
+    route_import:
+      - "65000:1"
+    route_export:
+      - "65000:1"
+
+vrf_body: { "Cisco-IOS-XE-native:vrf": 
+              {
+                "definition": [
+                  {
+                    "address-family":
+                      { "ipv4": {}
+                      },
+                    "name": "Police",
+                    "rd": "65000:1",
+                    "description": "Police VRF",
+                    "route-target": 
+                      { "export": [
+                          {
+                            "asn-ip": "65000:1"
+                          }
+                        ],
+                        "import": [
+                          { "asn-ip": "65000:1"
+                          }
+                        ]
+                      }
+                  },
+
+                  { "name": "Mgmt-vrf",
+                    "address-family": 
+                    { "ipv4": {}
+                    },
+                    "description": "Management VRF"
+                  }
+                ]
+              }
+          }

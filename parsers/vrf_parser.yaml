@@ -1,0 +1,62 @@
+---
+- name: Parser metadata
+  parser_metadata:
+    version: 1.0
+    command: show running-config
+    network_os: ios
+
+- name: Parse VRF config blocks
+  pattern_match:
+    regex: "vrf definition"
+    match_all: true
+    match_greedy: true
+    match_until: "\\n!" 
+  register: vrf_list
+  export: true
+  export_as: list
+
+- name: Parse RT config for each VRF
+  pattern_group:
+    
+    - name: Get VRF name
+      pattern_match:
+        regex: "vrf definition (\\S+)"
+        content: "{{ vrf }}"
+      register: name
+    
+    - name: Get route-target import
+      pattern_match:
+        regex: "route-target import (\\S+)"
+        content: "{{ vrf }}"
+        match_all: true
+      register: rt_import
+
+    - name: Get route-target export
+      pattern_match:
+        regex: "route-target export (\\S+)"
+        content: "{{ vrf }}"
+        match_all: true
+      register: rt_export
+
+  loop: "{{ vrf_list }}"
+  loop_control:
+    loop_var: vrf
+  register: vrf_data
+  export: true
+   
+- name: Export results to Ansible playbook in JSON
+  json_template:
+    template:
+      - key: "{{ vrf.name.matches[0] }}"
+        object:
+          - key: "route_import"
+            value: "{{ vrf.rt_import | map(attribute='matches') | list }}"
+          - key: "route_export"
+            value: "{{ vrf.rt_export | map(attribute='matches') | list }}"
+  loop: "{{ vrf_data }}"
+  loop_control:
+    loop_var: vrf
+  register: run_vrf_dict
+  export: true
+  export_as: dict
+

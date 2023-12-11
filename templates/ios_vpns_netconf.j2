@@ -1,0 +1,25 @@
+<config>
+<native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+	<vrf operation="merge">
+	{% for vrf in vrfs %}
+		<definition>
+			<name>{{ vrf.name }}</name>
+			<description>{{ vrf.description }}</description>
+			<rd>{{ vrf.rd }}</rd>
+			<route-target>
+			{% for rt in vrf.route_export %}
+				<export>
+					<asn-ip>{{ rt }}</asn-ip>
+				</export>
+			{% endfor %}
+			{% for rt in vrf.route_import %}
+				<import>
+					<asn-ip>{{ rt }}</asn-ip>
+				</import>
+			{% endfor %}
+			</route-target>
+		</definition>
+	{% endfor %}
+	</vrf>
+</native>
+</config>

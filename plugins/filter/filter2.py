@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 
-import re
+""" This file contains rt_diff custom filter which compares VRF config
+in running config and intended config. It returns list of dictionaries
+with route-targets "import" and "export" which should be added or
+deleted.
+"""
 
 class FilterModule(object):
+    """
+    Default class for implementing Python custom filters.
+    """
 
     def filters(self):
+        """Default function for implementing custom filters."""
         return { "rt_diff": rt_diff }
 
 
@@ -12,10 +20,11 @@ def rt_diff(int_vrf_list, run_vrf_dict):
     """ Compare list of VRFs which should be configured based on YAML config file
     with dictionary of VRF existing on the router"""
 
-    config_updates = [] # list of dictionaries with RT "import" and "export" communities to add and delete
-    
+    config_updates = [] # list of dictionaries with RT "import" and "export" communities
+    # to be added and deleted
+
     # Looping through intended VRF list from the lists defined in host_vars/<host>.yaml files
-    for int_vrf in int_vrf_list: 
+    for int_vrf in int_vrf_list:
         vrf_name = int_vrf['name']
         vrf_rd = int_vrf['rd']
         vrf_descr = int_vrf['description']
@@ -24,7 +33,8 @@ def rt_diff(int_vrf_list, run_vrf_dict):
                       'description': vrf_descr,
                       'rd': vrf_rd }
 
-        # Getting data about the VRF from running config. If VRF doesn't exist, dictionary with empty RT lists is returned
+        # Getting data about the VRF from running config.
+        # If VRF doesn't exist, dictionary with empty RT lists is returned
         run_vrf = run_vrf_dict.get(vrf_name, {'route_export': [], 'route_import': [] } )
 
         int_vrf_rti = set(int_vrf['route_import']) # Convert list of RT import of intended VRF to set
@@ -43,6 +53,3 @@ def rt_diff(int_vrf_list, run_vrf_dict):
         config_updates.append(vrf_update)
 
     return config_updates
-
-
-
